@@ -1,6 +1,6 @@
-# 42project-badges-action
+# 42project-badge-action
 
-This action allows you to generates badges related to your 42 project for your README.md with [shields.io](https://shields.io). 
+This action allows you to generates badges related to your 42 project for your README.md with [shields.io](https://shields.io).
 
 ## Configuration
 
@@ -10,8 +10,8 @@ This action allows you to generates badges related to your 42 project for your R
 3. Go to the *Secrets* page of the settings of your repository and add this token as a new secret. You can give it any name, for example `GIST_SECRET`.
 4. Add something like the following to your workflow:
 ```yml
-- name: 42 Project Badges
-  uses: Korkrane/42project-badges-action@v1.1.3
+- name: 42 Project Badge
+  uses: Korkrane/42project-badge-action@v1.0.0
   with:
     login: <your-42-login>
     project: <your-42-project>
@@ -63,7 +63,7 @@ Embed the badge with:
 ## Example usage
 ```yml
 # .github/workflows/main.yml
-name: 42-project-badges
+name: 42-project-badge
 on:
 
   push:
@@ -79,8 +79,8 @@ jobs:
       - name: Checkout repo content
         uses: actions/checkout@v3
 
-      - name: 42 Project Badges
-        uses: Korkrane/42project-badges-action@v1.1.3
+      - name: 42 Project Badge
+        uses: Korkrane/42project-badge-action@v1.0.0
         with:
           login: bahhas
           project: dr-quine
@@ -88,7 +88,7 @@ jobs:
           gistID: e68282bd835f9dab85e2c6b9b5522143
 ```
 
-## Example badge display 
+## Example badge display
 
 Project you subscribed to but didn't finish yet :
 
@@ -113,4 +113,3 @@ Failed project:
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Korkrane/e68282bd835f9dab85e2c6b9b5522143/raw/fail_grade.json)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Korkrane/e68282bd835f9dab85e2c6b9b5522143/raw/fail_bon.json)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Korkrane/e68282bd835f9dab85e2c6b9b5522143/raw/finished_corr.json)
-

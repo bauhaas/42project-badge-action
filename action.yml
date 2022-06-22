@@ -1,4 +1,4 @@
-name: '42 Project Badges'
+name: '42 Project Badge'
 description: 'Create badges via shields.io/endpoint for your README.md which may change with every commit.'
 branding:
   icon: 'box'
@@ -24,7 +24,7 @@ runs:
     - name: Checkout tools repo
       uses: actions/checkout@v3
       with:
-        repository: Korkrane/42project-badges-action
+        repository: Korkrane/42project-badge-action
     - name: setup python
       uses: actions/setup-python@v2
       with:

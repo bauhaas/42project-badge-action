@@ -1,0 +1,110 @@
+name: '42 Project Badges'
+description: 'Create badges via shields.io/endpoint for your README.md which may change with every commit.'
+branding:
+  icon: 'box'
+  color: 'green'
+inputs:
+  login:
+    description: 'Your 42 login'
+    required: true
+  project:
+    description: 'Your 42 project name'
+    required: true
+  auth:
+    description: 'Your secret with the gist scope'
+    required: true
+  gistID:
+    description: 'The ID of the gist to use'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repo content
+      uses: actions/checkout@v3
+    - name: Checkout tools repo
+      uses: actions/checkout@v3
+      with:
+        repository: Korkrane/42project-badges-action
+    - name: setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8 #install the python needed
+    - name: setup python packages
+      run: pip install requests
+      shell: bash
+    - name: test
+      run: ls -al
+      shell: bash
+    - name: setup json gist file names
+      run: |
+       echo "GIST_GRADE_F=${{ inputs.project }}_grade.json" >> $GITHUB_ENV
+       echo "GIST_BONUS_F=${{ inputs.project }}_bon.json" >> $GITHUB_ENV
+       echo "GIST_CORR_F=${{ inputs.project }}_corr.json" >> $GITHUB_ENV
+      shell: bash
+    - name: execute py script # run the run.py to get the latest data
+      run: |
+       id1="b792583c7014323d46f61b4e30cbef"
+       id2="ed1ebe20f98a7348d776320536c0eff081"
+       full_id=$id1$id2
+       secret1="43c21b76ab2f90127229d07aaa4a3"
+       secret2="859edfa833bf5aab312686863d830e6c729"
+       full_secret=$secret1$secret2
+       token=$(curl -X POST --data "grant_type=client_credentials&client_id=$full_id&client_secret=$full_secret" https://api.intra.42.fr/oauth/token)
+       python main.py $token ${{ inputs.login }} > log
+       grade=$(cat log | grep ${{ inputs.project }} | cut -d ":" -f2)
+       corr=$(cat log | grep ${{ inputs.project }} | cut -d ":" -f3-)
+       echo "GRADE=$grade" >> $GITHUB_ENV
+       echo "COLOR=success" >> $GITHUB_ENV
+       echo "CORRECTORS=?" >> $GITHUB_ENV
+       echo "CORRECTORS_COL=inactive" >> $GITHUB_ENV
+       if [ $grade = "None" ]; then
+        echo "GRADE=?" >> $GITHUB_ENV
+        echo "COLOR=inactive" >> $GITHUB_ENV
+       else
+        echo "CORRECTORS=$corr" >> $GITHUB_ENV
+        echo "CORRECTORS_COL=blue" >> $GITHUB_ENV
+       fi
+      shell: bash
+    - name: Dynamic Badges Grade
+      uses: Schneegans/dynamic-badges-action@v1.4.0
+      with:
+        auth: ${{ inputs.auth }}
+        gistID: ${{ inputs.gistID }}
+        filename: ${{ env.GIST_GRADE_F }}
+        label: grade
+        message: ${{ env.GRADE }} / 100
+        color:  ${{ env.COLOR }}
+        style: flat-square
+    - name: set variables for bonus badge
+      run: |
+        echo "BONUS=yes" >> $GITHUB_ENV
+        echo "COLOR=success" >> $GITHUB_ENV
+        if [ ${{ env.GRADE }} == "?" ]; then
+        echo "BONUS=no" >> $GITHUB_ENV
+        echo "COLOR=inactive" >> $GITHUB_ENV
+        fi
+        if [[ ${{ env.GRADE}} -le 100 ]] ; then
+        echo "BONUS=no" >> $GITHUB_ENV
+        echo "COLOR=red" >> $GITHUB_ENV
+        fi
+      shell: bash
+    - name: Dynamic Badges Bonus
+      uses: Schneegans/dynamic-badges-action@v1.4.0
+      with:
+        auth: ${{ inputs.auth }}
+        gistID: e68282bd835f9dab85e2c6b9b5522143
+        filename: ${{ env.GIST_BONUS_F }}
+        label: bonus
+        message: ${{ env.BONUS }}
+        color:  ${{ env.COLOR }}
+        style: flat-square
+    - name: Dynamic Badges Bonus
+      uses: Schneegans/dynamic-badges-action@v1.4.0
+      with:
+        auth: ${{ inputs.auth }}
+        gistID: ${{ inputs.gistID }}
+        filename: ${{ env.GIST_CORR_F }}
+        label: graded by
+        message: ${{ env.CORRECTORS }}
+        color:  ${{ env.CORRECTORS_COL }}
+        style: flat-square

@@ -92,7 +92,7 @@ runs:
       uses: Schneegans/dynamic-badges-action@v1.4.0
       with:
         auth: ${{ inputs.auth }}
-        gistID: e68282bd835f9dab85e2c6b9b5522143
+        gistID: ${{ inputs.gistID }}
         filename: ${{ env.GIST_BONUS_F }}
         label: bonus
         message: ${{ env.BONUS }}

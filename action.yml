@@ -7,9 +7,11 @@ inputs:
   login:
     description: 'Your 42 login'
     required: true
+    type: string
   project:
     description: 'Your 42 project name'
     required: true
+    type: string
   auth:
     description: 'Your secret with the gist scope'
     required: true

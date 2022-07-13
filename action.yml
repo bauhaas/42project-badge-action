@@ -53,8 +53,8 @@ runs:
        full_secret=$secret1$secret2
        token=$(curl -X POST --data "grant_type=client_credentials&client_id=$full_id&client_secret=$full_secret" https://api.intra.42.fr/oauth/token)
        python main.py $token ${{ inputs.login }} > log
-       grade=$(cat log | grep ${{ inputs.project }} | cut -d ":" -f2)
-       corr=$(cat log | grep ${{ inputs.project }} | cut -d ":" -f3-)
+       grade=$(cat log | grep "${{ inputs.project }}" | cut -d ":" -f2)
+       corr=$(cat log | grep "${{ inputs.project }}" | cut -d ":" -f3-)
        echo "GRADE=$grade" >> $GITHUB_ENV
        echo "COLOR=success" >> $GITHUB_ENV
        echo "CORRECTORS=?" >> $GITHUB_ENV
